@@ -1,0 +1,28 @@
+{
+  "name": "mojotokenrewards",
+  "version": "1.0.0",
+  "main": "worker/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jam-Killer-Productions-LLC/mojotokenrewards.git"
+  },
+  "keywords": ["cloudflare", "worker", "web3", "thirdweb", "blockchain", "tokens"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jam-Killer-Productions-LLC/mojotokenrewards/issues"
+  },
+  "homepage": "https://github.com/Jam-Killer-Productions-LLC/mojotokenrewards#readme",
+  "description": "Cloudflare Worker for minting Mojo tokens based on user scores",
+  "devDependencies": {
+    "@thirdweb-dev/sdk": "^4.0.99",
+    "ethers": "^5.8.0",
+    "typescript": "^5.8.2",
+    "wrangler": "^4.6.0"
+  }
+}

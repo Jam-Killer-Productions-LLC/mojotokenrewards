@@ -1,0 +1,11 @@
+{
+  "name": "mojo-token-rewards",
+  "compatibility_date": "2023-12-01",
+  "main": "worker/index.ts",
+  "vars": {
+    // Example for local testing only, don't put actual secrets here
+    // "PRIVATE_KEY": "your-private-key-here"
+  }
+  // Use secret binding for production
+  // Run: wrangler secret put PRIVATE_KEY
+} 
