@@ -11,8 +11,8 @@
     { "pattern": "mojotokenrewards.producerprotocol.pro", "custom_domain": true }
   ],
   "services": [
-    { "binding": "metaupload", "service": "metaupload" },
-    { "binding": "dontKillTheJammer", "service": "dont-kill-the-jammer" }
+
+
   ],
   "vars": {},
   "secret_vars": ["PRIVATE_KEY"]
