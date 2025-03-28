@@ -1,7 +1,12 @@
 {
   "name": "mojo-token-rewards",
-  "compatibility_date": "2023-12-01",
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
   "main": "worker/index.ts",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
   "vars": {
     // Example for local testing only, don't put actual secrets here
     // "PRIVATE_KEY": "your-private-key-here"
