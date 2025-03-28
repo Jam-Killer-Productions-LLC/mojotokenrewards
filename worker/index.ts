@@ -7,8 +7,8 @@ const MOJO_TOKEN_CONTRACT_ADDRESS = "0xf9e7D3cd71Ee60C7A3A64Fa7Fcb81e610Ce1daA5"
 export interface Env {
   PRIVATE_KEY: string;
   // Service bindings
-  metaupload: Fetcher;
-  dontKillTheJammer: Fetcher;
+  metaupload: { fetch(request: Request): Promise<Response> };
+  dontKillTheJammer: { fetch(request: Request): Promise<Response> };
 }
 
 // CORS headers
