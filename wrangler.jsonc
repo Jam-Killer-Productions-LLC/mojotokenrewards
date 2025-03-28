@@ -7,10 +7,13 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
-  "vars": {
-    // Example for local testing only, don't put actual secrets here
-    // "PRIVATE_KEY": "your-private-key-here"
-  }
-  // Use secret binding for production
-  // Run: wrangler secret put PRIVATE_KEY
+  "routes": [
+    { "pattern": "mojotokenrewards.producerprotocol.pro", "custom_domain": true }
+  ],
+  "services": [
+    { "binding": "metaupload", "service": "metaupload" },
+    { "binding": "dontKillTheJammer", "service": "dont-kill-the-jammer" }
+  ],
+  "vars": {},
+  "secret_vars": ["PRIVATE_KEY"]
 } 
