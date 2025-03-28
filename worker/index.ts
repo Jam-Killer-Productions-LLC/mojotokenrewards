@@ -1,14 +1,19 @@
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { ethers } from "ethers";
 
+// Define service binding interface
+interface ServiceBinding {
+  fetch(request: Request): Promise<Response>;
+}
+
 // Contract address for Mojo token
 const MOJO_TOKEN_CONTRACT_ADDRESS = "0xf9e7D3cd71Ee60C7A3A64Fa7Fcb81e610Ce1daA5";
 
 export interface Env {
   PRIVATE_KEY: string;
   // Service bindings
-  metaupload: { fetch(request: Request): Promise<Response> };
-  dontKillTheJammer: { fetch(request: Request): Promise<Response> };
+  metaupload: ServiceBinding;
+  dontKillTheJammer: ServiceBinding;
 }
 
 // CORS headers
