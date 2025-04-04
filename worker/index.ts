@@ -172,7 +172,7 @@ export default {
           });
         }
 
-        // Mint the tokens
+        // Mint the tokens using the provided address and mojoScore
         const result = await mintMojoTokens(address, scoreNumber, env.PRIVATE_KEY);
         
         return new Response(
@@ -207,4 +207,4 @@ export default {
       );
     }
   }
-}; 
+};
