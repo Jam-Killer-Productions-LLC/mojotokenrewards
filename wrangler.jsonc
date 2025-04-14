@@ -1,19 +1,12 @@
 {
   "name": "mojo-token-rewards",
-  "compatibility_date": "2025-03-07",
+  "main": "worker.ts",
+  "compatibility_date": "2025-04-14",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "worker/index.ts",
-  "observability": {
-    "enabled": true,
-    "head_sampling_rate": 1
+  "vars": {
+    "ENVIRONMENT": "production"
   },
-  "routes": [
-    { "pattern": "mojotokenrewards.producerprotocol.pro", "custom_domain": true }
-  ],
-  "services": [
-
-
-  ],
-  "vars": {},
-  "secret_vars": ["PRIVATE_KEY"]
-} 
+  "secrets": [
+    "PRIVATE_KEY"
+  ]
+}
