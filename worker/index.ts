@@ -1,22 +1,18 @@
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { ethers } from "ethers";
 
-// Define service binding interface
 interface ServiceBinding {
   fetch(request: Request): Promise<Response>;
 }
 
-// Contract address for Mojo token
 const MOJO_TOKEN_CONTRACT_ADDRESS = "0xf9e7D3cd71Ee60C7A3A64Fa7Fcb81e610Ce1daA5";
 
 export interface Env {
   PRIVATE_KEY: string;
-  // Service bindings
   metaupload: ServiceBinding;
   dontKillTheJammer: ServiceBinding;
 }
 
-// CORS headers
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE, PATCH",
@@ -33,10 +29,8 @@ function handleCORS(): Response {
   });
 }
 
-// Function to mint Mojo tokens to the specified address
 async function mintMojoTokens(userAddress: string, mojoScore: number, privateKey: string) {
   try {
-    // Initialize SDK with private key on Optimism network
     const sdk = ThirdwebSDK.fromPrivateKey(
       privateKey,
       "optimism",
@@ -45,32 +39,29 @@ async function mintMojoTokens(userAddress: string, mojoScore: number, privateKey
       }
     );
 
-    // Get the token contract
     const mojoContract = await sdk.getContract(MOJO_TOKEN_CONTRACT_ADDRESS);
-    
-    // Convert the mojoScore to the proper token amount with 18 decimals
     const tokenAmount = ethers.utils.parseUnits(mojoScore.toString(), 18);
     
-    // Call the mintTo function
-    const tx = await mojoContract.call("mintTo", [userAddress, tokenAmount.toString()]);
+    const tx = await mojoContract.erc20.mintTo(userAddress, tokenAmount);
     
     return {
-      transactionHash: tx.receipt.transactionHash,
-      blockNumber: tx.receipt.blockNumber
+      txHash: tx.receipt.transactionHash
     };
   } catch (error) {
-    // Enhance error with more details for debugging
-    console.error("Error minting tokens:", error);
+    console.error("Minting error:", error);
+    let errorMessage = "Failed to mint tokens";
     if (error instanceof Error) {
-      throw new Error(`Failed to mint tokens: ${error.message}`);
+      errorMessage = `Failed to mint tokens: ${error.message}`;
+      if ((error as any).reason) {
+        errorMessage += ` (Reason: ${(error as any).reason})`;
+      }
     }
-    throw new Error("Unknown error occurred while minting tokens");
+    throw new Error(errorMessage);
   }
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    // Add security headers
     const responseHeaders = {
       ...corsHeaders,
       "X-Content-Type-Options": "nosniff",
@@ -78,24 +69,19 @@ export default {
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
     };
 
-    // CORS handling
     if (request.method === "OPTIONS") {
       return handleCORS();
     }
 
-    // Extract the URL path
     const url = new URL(request.url);
     const path = url.pathname;
 
     try {
-      // Validate that PRIVATE_KEY is set
       if (!env.PRIVATE_KEY) {
         throw new Error("PRIVATE_KEY environment variable is not set");
       }
 
-      // Forward requests to service bindings if path matches
       if (path.startsWith('/metaupload')) {
-        // Clone the request and modify URL to remove the path prefix
         const newRequest = new Request(
           request.url.replace('/metaupload', ''),
           request
@@ -104,7 +90,6 @@ export default {
       }
       
       if (path.startsWith('/jammer')) {
-        // Clone the request and modify URL to remove the path prefix
         const newRequest = new Request(
           request.url.replace('/jammer', ''),
           request
@@ -112,7 +97,6 @@ export default {
         return env.dontKillTheJammer.fetch(newRequest);
       }
 
-      // Handle main worker endpoints
       if (request.method === "GET" && path === '/') {
         return new Response(JSON.stringify({
           status: "online",
@@ -125,11 +109,10 @@ export default {
       }
       
       if (request.method === "POST" && path === '/mint') {
-        // Parse JSON safely
         let body;
         try {
           body = await request.json();
-        } catch (e) {
+        } catch {
           return new Response(JSON.stringify({ 
             error: "Invalid JSON in request body" 
           }), { 
@@ -138,7 +121,6 @@ export default {
           });
         }
 
-        // Validate input data
         const { address, mojoScore } = body;
         
         if (!address) {
@@ -155,7 +137,6 @@ export default {
           });
         }
 
-        // Validate address format
         if (!ethers.utils.isAddress(address)) {
           return new Response(JSON.stringify({ error: "Invalid Ethereum address format" }), { 
             status: 400,
@@ -163,7 +144,6 @@ export default {
           });
         }
 
-        // Validate score is a number
         const scoreNumber = Number(mojoScore);
         if (isNaN(scoreNumber) || scoreNumber <= 0) {
           return new Response(JSON.stringify({ error: "mojoScore must be a positive number" }), { 
@@ -172,14 +152,11 @@ export default {
           });
         }
 
-        // Mint the tokens using the provided address and mojoScore
         const result = await mintMojoTokens(address, scoreNumber, env.PRIVATE_KEY);
         
         return new Response(
           JSON.stringify({ 
-            success: true, 
-            txHash: result.transactionHash,
-            blockNumber: result.blockNumber
+            txHash: result.txHash
           }),
           { headers: responseHeaders }
         );
@@ -194,13 +171,10 @@ export default {
       });
     } catch (error) {
       console.error("Worker error:", error);
-      
-      // Format error message
       let errorMessage = "Internal Server Error";
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      
       return new Response(
         JSON.stringify({ error: errorMessage }), 
         { status: 500, headers: responseHeaders }
