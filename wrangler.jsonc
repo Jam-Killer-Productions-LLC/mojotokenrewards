@@ -1,6 +1,6 @@
 {
   "name": "mojo-token-rewards",
-  "main": "worker.ts",
+  "main": "worker/index.ts",
   "compatibility_date": "2025-04-14",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {

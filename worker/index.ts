@@ -31,7 +31,7 @@ async function mintMojoTokens(userAddress: string, mojoScore: number, privateKey
   const mojoContract = await sdk.getContract(MOJO_TOKEN_CONTRACT_ADDRESS);
   const tokenAmount = ethers.utils.parseUnits(mojoScore.toString(), 18);
   
-  const tx = await mojoContract.erc20.mintTo(userAddress, tokenAmount);
+  const tx = await mojoContract.erc20.mintTo(userAddress, tokenAmount.toString());
   
   return { txHash: tx.receipt.transactionHash };
 }
